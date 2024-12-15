@@ -8,7 +8,7 @@ import tensorflow as tf
 import numpy as np
 from ultralytics import YOLO
 import os
-
+import datetime
 # Variable definitions
 confidence = 0.5
 disease = False
@@ -18,13 +18,12 @@ output_dir = '/Users/joshua.stanley/Desktop/Science Research/Model outputs/R-CNN
 
 
 
-leaf_model = tf.keras.models.load_model('/Users/joshua.stanley/Desktop/real2.keras')
+leaf_model = tf.keras.models.load_model('/Users/joshua.stanley/Desktop/newmodel.keras')
 
 
 
 
-class_names = ['Cassava__brown_streak_disease', 'Potato___Early_blight', 'Cassava__green_mottle', 'Blueberry___healthy', 'Cassava__healthy', 'Corn_(maize)___healthy', 'Cassava__mosaic_disease', 'Tomato___Target_Spot', 'Chili__healthy', 'Chili__leaf curl', 'Chili__whitefly', 'Chili__leaf spot', 'Potato___Late_blight', 'Chili__yellowish', 'Tomato___Late_blight', 'Coffee__cercospora_leaf_spot', 'Tomato___Tomato_mosaic_virus', 'Coffee__healthy', 'Coffee__red_spider_mite', 'Orange___Haunglongbing_(Citrus_greening)', 'Coffee__rust', 'Tomato___Leaf_Mold', 'Cucumber__diseased', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)', 'Cucumber__healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Gauva__diseased', 'Apple___Cedar_apple_rust', 'Gauva__healthy', 'Tomato___Bacterial_spot', 'Grape__black_measles', 'Grape___healthy', 'Jamun__diseased', 'Tomato___Early_blight', 'Jamun__healthy', 'Lemon__diseased', 'Grape___Esca_(Black_Measles)', 'Lemon__healthy', 'Raspberry___healthy', 'Mango__diseased', 'Tomato___healthy', 'Mango__healthy', 'Cherry_(including_sour)___healthy', 'Pomegranate__diseased', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Pomegranate__healthy', 'Apple___Apple_scab', 'Rice__brown_spot', 'Corn_(maize)___Northern_Leaf_Blight', 'Rice__healthy', 'Tomato___Spider_mites Two-spotted_spider_mite', 'Rice__hispa', 'Soybean__rust', 'Peach___Bacterial_spot', 'Rice__leaf_blast', 'Pepper,_bell___Bacterial_spot', 'Rice__neck_blast', 'Tomato___Septoria_leaf_spot', 'Squash___Powdery_mildew', 'Soybean__caterpillar', 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Soybean__diabrotica_speciosa', 'Apple___Black_rot', 'Soybean__downy_mildew', 'Apple___healthy', 'Soybean__mosaic_virus', 'Strawberry___Leaf_scorch', 'Soybean__powdery_mildew', 'Potato___healthy', 'Soybean__southern_blight', 'Soybean___healthy', 'Sugarcane__healthy', 'Sugarcane__red_rot', 'Sugarcane__red_stripe', 'Sugarcane__rust', 'Tea__algal_leaf', 'Tea__anthracnose', 'Tea__bird_eye_spot', 'Tea__brown_blight', 'Tea__healthy', 'Tea__red_leaf_spot', 'Wheat__brown_rust', 'Wheat__healthy', 'Wheat__septoria', 'Strawberry___healthy', 'Cassava__bacterial_blight', 'Peach___healthy', 'Pepper,_bell___healthy', 'Corn_(maize)___Common_rust_', 'Soybean__bacterial_blight', 'Sugarcane__bacterial_blight', 'Wheat__yellow_rust', 'Grape___Black_rot']
-
+class_names = ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy', 'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy', 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Corn_(maize)___Common_rust_', 'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy', 'Grape___Black_rot', 'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)', 'Grape___healthy', 'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot', 'Peach___healthy', 'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy', 'Potato___Early_blight', 'Potato___Late_blight', 'Potato___healthy', 'Raspberry___healthy', 'Soybean___healthy', 'Squash___Powdery_mildew', 'Strawberry___Leaf_scorch', 'Strawberry___healthy', 'Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight', 'Tomato___Leaf_Mold', 'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite', 'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus', 'Tomato___healthy']
 # GUI
 class App(customtkinter.CTk):
     def __init__(self):
@@ -124,18 +123,33 @@ class App(customtkinter.CTk):
                         else:
                             print("Cropped leaf shape:", cropped_leaf.shape)
                         cropped_leaf = cv2.cvtColor(cropped_leaf, cv2.COLOR_BGR2RGB)
-                        data = tf.image.resize(cropped_leaf, [256, 256])
+                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')  # Unique timestamp
+                        save_path = os.path.join(output_dir, f"leaf_{timestamp}.jpg")
+                        cv2.imwrite(save_path, cv2.cvtColor(cropped_leaf, cv2.COLOR_RGB2BGR))
+                        print(f"Saved cropped leaf to {save_path}")
+                        data = tf.image.resize(cropped_leaf, [128, 128])
                         data = np.expand_dims(data, axis=0)
                         prediction = leaf_model.predict(data, verbose=0)
 
                         
                         # Fixed preprocessing pipeline
+                        confidence_threshold = 0.6  # Set your desired confidence threshold
+
                         predicted_class = np.argmax(prediction[0])
-                        class_label = class_names[predicted_class]
+                        conf = prediction[0][predicted_class]  # Get confidence for the predicted class
+
+                        if conf < confidence_threshold:  # Check if confidence is below the threshold
+                            class_label = "get closer to leaf"
+                            color = (255, 255, 0)  # Yellow for low confidence
+                            label = class_label
+                        else:
+                            class_label = class_names[predicted_class]
+                            color = (0, 255, 0) if 'healthy' in class_label else (0, 0, 255)
+                            label = f"{class_label} ({conf:.2f})"
+
                         print(class_label)
-                        color = (0, 255, 0) if 'healthy' in class_label else (0, 0, 255)
-                        label = f"{class_label} ({conf:.2f})"
-                        print(class_label)
+
+                        # Draw rectangle and label
                         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                         cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
@@ -183,26 +197,32 @@ class App(customtkinter.CTk):
                         else:
                             print("Cropped leaf shape:", cropped_leaf.shape)
                         cropped_leaf = cv2.cvtColor(cropped_leaf, cv2.COLOR_BGR2RGB)
-                        data = tf.image.resize(cropped_leaf, [256, 256])
+                        data = tf.image.resize(cropped_leaf, [128, 128])
                         data = np.expand_dims(data, axis=0)
                         prediction = leaf_model.predict(data)
 
                         
                         # Fixed preprocessing pipeline
                         
-                        predicted_class = np.argmax(prediction[0])
-                        class_label = class_names[predicted_class]
+                        confidence_threshold = 0.6  # Set your desired confidence threshold
 
-                        color = (0, 255, 0) if 'healthy' in class_label else (0, 0, 255)
-                        label = f"{class_label} ({conf:.2f})"
+                        predicted_class = np.argmax(prediction[0])
+                        conf = prediction[0][predicted_class]  # Get confidence for the predicted class
+
+                        if conf < confidence_threshold:  # Check if confidence is below the threshold
+                            class_label = "get closer to leaf"
+                            color = (255, 255, 0)  # Yellow for low confidence
+                            label = class_label
+                        else:
+                            class_label = class_names[predicted_class]
+                            color = (0, 255, 0) if 'healthy' in class_label else (0, 0, 255)
+                            label = f"{class_label} ({conf:.2f})"
 
                         print(class_label)
 
+                        # Draw rectangle and label
                         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                         cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-
-                        save_path = os.path.join(output_dir, f"{label.replace(' ', '_')}.jpg")
-                        cv2.imwrite(save_path, cropped_leaf)
 
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img = ImageTk.PhotoImage(Image.fromarray(rgb_frame))
