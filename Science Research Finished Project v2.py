@@ -18,12 +18,57 @@ output_dir = '/Users/joshua.stanley/Desktop/Science Research/Model outputs/R-CNN
 
 
 
-leaf_model = tf.keras.models.load_model('/Users/joshua.stanley/Desktop/newmodel.keras')
 
 
+apple_classes = ['Apple__black_rot', 'Apple__healthy', 'Apple__rust', 'Apple__scab']
+casava_classes = ['Cassava__bacterial_blight', 'Cassava__brown_streak_disease', 'Cassava__green_mottle', 'Cassava__healthy', 'Cassava__mosaic_disease']
+cherry_classes = ['Cherry__healthy', 'Cherry__powdery_mildew']
+chili_classes = ['Chili__healthy', 'Chili__leaf curl', 'Chili__leaf spot', 'Chili__whitefly', 'Chili__yellowish']
+citrus_classes = ['Black spot', 'canker', 'greening', 'healthy']
+coffee_classes = ['Coffee__cercospora_leaf_spot', 'Coffee__healthy', 'Coffee__red_spider_mite', 'Coffee__rust']
+corn_classes = ['Corn__common_rust', 'Corn__gray_leaf_spot', 'Corn__healthy', 'Corn__northern_leaf_blight']
+cucumber_classes = ['Cucumber__diseased', 'Cucumber__healthy']
+grape_classes = ['Grape__black_measles', 'Grape__black_rot', 'Grape__healthy', 'Grape__leaf_blight_(isariopsis_leaf_spot)']
+guava_classes = ['Gauva__diseased', 'Gauva__healthy']
+jamun_classes  = ['Jamun__diseased', 'Jamun__healthy']
+lemon_classes  = ['Lemon__diseased', 'Lemon__healthy']
+mango_classes = ['Mango__diseased', 'Mango__healthy']
+peach_classes = ['Peach__bacterial_spot', 'Peach__healthy']
+pepper_classes = ['Pepper_bell__bacterial_spot', 'Pepper_bell__healthy']
+pomegranate_classes = ['Pomegranate__diseased', 'Pomegranate__healthy']
+potato_classes = ['Potato__early_blight', 'Potato__healthy', 'Potato__late_blight']
+rice_classes = ['Rice__brown_spot', 'Rice__healthy', 'Rice__hispa', 'Rice__leaf_blast', 'Rice__neck_blast']
+soybean_classes = ['Soybean__bacterial_blight', 'Soybean__caterpillar', 'Soybean__diabrotica_speciosa', 'Soybean__downy_mildew', 'Soybean__healthy', 'Soybean__mosaic_virus', 'Soybean__powdery_mildew', 'Soybean__rust', 'Soybean__southern_blight']
+strawberry_classes = ['Strawberry___leaf_scorch', 'Strawberry__healthy']
+sugarcane_classes = ['Sugarcane__bacterial_blight', 'Sugarcane__healthy', 'Sugarcane__red_rot', 'Sugarcane__red_stripe', 'Sugarcane__rust']
+tea_classes = ['Tea__algal_leaf', 'Tea__anthracnose', 'Tea__bird_eye_spot', 'Tea__brown_blight', 'Tea__healthy']
+tomato_classes = ['Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight', 'Tomato___Leaf_Mold', 'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite', 'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus', 'Tomato___healthy']
 
+classes = ['apple',
+           'casava',
+           'cherry',
+           'chili',
+           'citrus',
+           'coffee',
+           'corn',
+           'cucumber',
+           'grape',
+           'guava',
+           'jamun',
+           'lemon',
+           'mango',
+           'peach',
+           'pepper',
+           'pomegranate',
+           'potato',
+           'rice',
+           'soybean',
+           'strawberry',
+           'sugarcane',
+           'tea',
+           'tomato'
+]
 
-class_names = ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy', 'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy', 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Corn_(maize)___Common_rust_', 'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy', 'Grape___Black_rot', 'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)', 'Grape___healthy', 'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot', 'Peach___healthy', 'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy', 'Potato___Early_blight', 'Potato___Late_blight', 'Potato___healthy', 'Raspberry___healthy', 'Soybean___healthy', 'Squash___Powdery_mildew', 'Strawberry___Leaf_scorch', 'Strawberry___healthy', 'Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight', 'Tomato___Leaf_Mold', 'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite', 'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus', 'Tomato___healthy']
 # GUI
 class App(customtkinter.CTk):
     def __init__(self):
@@ -70,10 +115,18 @@ class App(customtkinter.CTk):
         self.radio_button_file = customtkinter.CTkRadioButton(self.sidebar_frame, text="File Detection", variable=self.radio_var, value=1)
         self.radio_button_file.grid(row=3, column=0, padx=20, pady=(10, 0))
 
+
+        self.plant_dropdown = customtkinter.CTkOptionMenu(self.tabview.tab('Output'), dynamic_resizing=True, values=classes, command=self.model_select)
+        self.plant_dropdown.grid(row=2, column=0)
+        self.plant_type = 'apple'
         self.file_path = None
         self.file_button = customtkinter.CTkButton(self.sidebar_frame, text="Select File", command=self.select_file)
         self.file_button.grid(row=4, column=0, padx=20, pady=(10, 0))
 
+    def get_selected_value(self):
+        self.plant_type = self.plant_dropdown.get()
+        print(f"Selected Plant: {self.plant_type}")
+        self.model_select(self.plant_type)
     def select_file(self):
         self.file_path = filedialog.askopenfilename(
             title="Select a Video File",
@@ -88,7 +141,12 @@ class App(customtkinter.CTk):
             threading.Thread(target=self.live_detection_thread, daemon=True).start()
         else:
             threading.Thread(target=self.file_detection_thread, daemon=True).start()
-
+    def model_select(self, crop):
+        global leaf_model, class_name
+        leaf_model = tf.keras.models.load_model(f'/Users/joshua.stanley/Desktop/Science Research/Saved Models/category/model{crop}.keras')
+        class_name = globals()[f'{crop}_classes']
+        print(f'className{class_name}')
+        print(crop)
     def confidence_function(self, value):
         global confidence
         confidence = float(value)
@@ -133,7 +191,7 @@ class App(customtkinter.CTk):
 
                         
                         # Fixed preprocessing pipeline
-                        confidence_threshold = 0.6  # Set your desired confidence threshold
+                        confidence_threshold = 0.5  # Set your desired confidence threshold
 
                         predicted_class = np.argmax(prediction[0])
                         conf = prediction[0][predicted_class]  # Get confidence for the predicted class
@@ -143,7 +201,7 @@ class App(customtkinter.CTk):
                             color = (255, 255, 0)  # Yellow for low confidence
                             label = class_label
                         else:
-                            class_label = class_names[predicted_class]
+                            class_label = class_name[predicted_class]
                             color = (0, 255, 0) if 'healthy' in class_label else (0, 0, 255)
                             label = f"{class_label} ({conf:.2f})"
 
@@ -175,8 +233,8 @@ class App(customtkinter.CTk):
         model = YOLO('/Users/joshua.stanley/Desktop/train32/weights/best.pt')
         model.overrides['verbose'] = False
         cap = cv2.VideoCapture(self.file_path)
-
         while cap.isOpened():
+            
             ret, frame = cap.read()
             if not ret:
                 break
@@ -189,7 +247,7 @@ class App(customtkinter.CTk):
                 for box in r.boxes:
                     x1, y1, x2, y2 = map(int, box.xyxy[0])
                     conf = box.conf[0]
-
+                    
                     if conf >= confidence:
                         cropped_leaf = frame[y1:y2, x1:x2]
                         if cropped_leaf.size == 0:
@@ -204,7 +262,7 @@ class App(customtkinter.CTk):
                         
                         # Fixed preprocessing pipeline
                         
-                        confidence_threshold = 0.6  # Set your desired confidence threshold
+                        confidence_threshold = 0.5  # Set your desired confidence threshold
 
                         predicted_class = np.argmax(prediction[0])
                         conf = prediction[0][predicted_class]  # Get confidence for the predicted class
@@ -214,7 +272,7 @@ class App(customtkinter.CTk):
                             color = (255, 255, 0)  # Yellow for low confidence
                             label = class_label
                         else:
-                            class_label = class_names[predicted_class]
+                            class_label = class_name[predicted_class]
                             color = (0, 255, 0) if 'healthy' in class_label else (0, 0, 255)
                             label = f"{class_label} ({conf:.2f})"
 
