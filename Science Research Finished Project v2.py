@@ -181,10 +181,8 @@ class App(customtkinter.CTk):
                         else:
                             print("Cropped leaf shape:", cropped_leaf.shape)
                         cropped_leaf = cv2.cvtColor(cropped_leaf, cv2.COLOR_BGR2RGB)
-                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')  # Unique timestamp
-                        save_path = os.path.join(output_dir, f"leaf_{timestamp}.jpg")
-                        cv2.imwrite(save_path, cv2.cvtColor(cropped_leaf, cv2.COLOR_RGB2BGR))
-                        print(f"Saved cropped leaf to {save_path}")
+                        
+                        
                         data = tf.image.resize(cropped_leaf, [128, 128])
                         data = np.expand_dims(data, axis=0)
                         prediction = leaf_model.predict(data, verbose=0)
