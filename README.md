@@ -27,11 +27,11 @@ Section 6 - Version history
 
 Section 1 - Overview of repository
 
-	This repository contains all code used in the development of my project. It has been organized in folders for their different use cases. The final python application is listed in its own directory as Science Research Final Application.py. The application will not function properly without the necessary packages installed, highlighted in Section 4. 
+This repository contains all code used in the development of my project. It has been organized in folders for their different use cases. The final python application is listed in its own directory as Science Research Final Application.py. The application will not function properly without the necessary packages installed, highlighted in Section 4. 
 
 Section 2 - Project organization and directories
 
-	All code has been organized into folders based on the role they played in the development of my application, listed here:
+All code has been organized into folders based on the role they played in the development of my application, listed here:
 
 
 Previous versions 
@@ -59,11 +59,11 @@ Models
 
 Section 3 - Application structure and deep learning backend
 
-	The plant disease application functions by using two different machine learning models, a Convolutional Neural Network (CNN), and a Regional Convolutional Neural Network, or object detection model. 
+The plant disease application functions by using two different machine learning models, a Convolutional Neural Network (CNN), and a Regional Convolutional Neural Network, or object detection model. 
 
 Regional Convolutional Neural Network - 
 
-	This model is the first phase in the machine learning backend, it’s goal to automate the crop analysis system. It works by detecting isolating multiple leaf images it finds in either live camera footage or prerecorded video footage, and then individually cropping all the leaves detected in each frame of the video.
+This model is the first phase in the machine learning backend, it’s goal to automate the crop analysis system. It works by detecting isolating multiple leaf images it finds in either live camera footage or prerecorded video footage, and then individually cropping all the leaves detected in each frame of the video.
 
 
 
@@ -73,11 +73,11 @@ Regional Convolutional Neural Network -
 
 Convolutional Neural Network -
 
-	This model is the second phase in the machine learning backend, it’s goal to classify the cropped leaf images from the R-CNN, and analyzing the leaves to detect disease in a crop. 
+This model is the second phase in the machine learning backend, it’s goal to classify the cropped leaf images from the R-CNN, and analyzing the leaves to detect disease in a crop. 
 
 Section 4 - Package requirements and installations
 
-	This project involved the use of many different Python libraries. All code will not function properly if the necessary libraries are not installed, which are detailed here. You can install all of these packages via pip, by running this command in your terminal:
+This project involved the use of many different Python libraries. All code will not function properly if the necessary libraries are not installed, which are detailed here. You can install all of these packages via pip, by running this command in your terminal:
 
 pip install <python library>
 
@@ -135,30 +135,30 @@ Section 6 - Version history
 
 Version 1 - 
 
-	This was the initial application. It was able to process pre recorded videos using the main deep learning backend detailed in section 3. It processed a 1 minute video on an average of 2-5 minutes. The output of the models would then be very briefly displayed. The accuracy of this application was near 0%. 
+This was the initial application. It was able to process pre recorded videos using the main deep learning backend detailed in section 3. It processed a 1 minute video on an average of 2-5 minutes. The output of the models would then be very briefly displayed. The accuracy of this application was near 0%. 
 
 Version 2 -
 
-	This version was the most drastic update to the application. 
+This version was the most drastic update to the application. 
 It included:
 
 	
-	-Live analysis feature
+-Live analysis feature
 	
-	-Live preview of model processing
+-Live preview of model processing
 	
-	- Instant results
+- Instant results
 	
-	-Dramatically faster processing
+-Dramatically faster processing
 	
-	-Updated UI
+-Updated UI
 	
-	-Adjustable confidence parameter for R-CNN
+-Adjustable confidence parameter for R-CNN
 Version 3 - 
 	
-	This version fixed extreme class bias by adding a model selection feature, running multiple CNN’s, each for a specific crop, to increase the accuracy to 95.37%.
+This version fixed extreme class bias by adding a model selection feature, running multiple CNN’s, each for a specific crop, to increase the accuracy to 95.37%.
 
 Version 4 -
 	
-	This version mainly updated the GUI, adding a disease info panel for treatment options and disease context. As well, it added a zoom feature to the settings tab to make viewing the crop feed much easier. 
+This version mainly updated the GUI, adding a disease info panel for treatment options and disease context. As well, it added a zoom feature to the settings tab to make viewing the crop feed much easier. 
 
