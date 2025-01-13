@@ -1,12 +1,18 @@
-Josh Stanley
+# Josh Stanley
 
-Broward County Science Fair
+# Broward County Science Fair
 
 
 Creating a cost effective, real time, Python deep learning application for the early detection of plant disease
 
+<img width="1190" alt="Screenshot 2025-01-12 at 7 45 44 PM" src="https://github.com/user-attachments/assets/8759f21e-4eac-4fc4-99d3-bcfbdf0b85fb" />
+
+
+
 
 This repository is organized into 6 sections:
+
+
 
 Section 1 - Overview of repository
 Section 2 - Project organization and directories
@@ -25,11 +31,11 @@ Section 6 - Version history
 
 
 
-**Section 1 - Overview of repository**
+# Section 1 - Overview of repository
 
 This repository contains all code used in the development of my project. It has been organized in folders for their different use cases. The final python application is listed in its own directory as Science Research Final Application.py. The application will not function properly without the necessary packages installed, highlighted in Section 4. 
 
-**Section 2 - Project organization and directories**
+# Section 2 - Project organization and directories
 
 All code has been organized into folders based on the role they played in the development of my application, listed here:
 
@@ -57,7 +63,7 @@ Models
 	This folder contains every model used in the development of my application as well as the final. Models located in the “final” folder were used in the final application. Models located in the “previous” folder were used in older application versions. Models located in the “Hailo” folder were used on the Hailo 8L chip, and cannot be interacted with unless on that specific hardware.
 
 
-**Section 3 - Application structure and deep learning backend**
+# Section 3 - Application structure and deep learning backend
 
 The plant disease application functions by using two different machine learning models, a Convolutional Neural Network (CNN), and a Regional Convolutional Neural Network, or object detection model. 
 
@@ -75,7 +81,7 @@ Convolutional Neural Network -
 
 This model is the second phase in the machine learning backend, it’s goal to classify the cropped leaf images from the R-CNN, and analyzing the leaves to detect disease in a crop. 
 
-**Section 4 - Package requirements and installations**
+# Section 4 - Package requirements and installations
 
 This project involved the use of many different Python libraries. All code will not function properly if the necessary libraries are not installed, which are detailed here. You can install all of these packages via pip, by running this command in your terminal:
 
@@ -127,11 +133,11 @@ Math
 
 
 
-**Section 5 - Raspberry Pi 5 (RPI 5)**
+# Section 5 - Raspberry Pi 5 (RPI 5)
 
 This project involved running and testing my models on a Raspberry Pi 5 and Hailo 8L AI chip. There is some code included for the conversion and interaction with these models, as well as other parts including the RPI 5. 
 
-**Section 6 - Version history**
+# Section 6 - Version history
 
 All 4 completed versions of this application are included in this repository.
 
@@ -145,15 +151,15 @@ This version was the most drastic update to the application.
 It included:
 
 	
--Live analysis feature
+- Live analysis feature
 	
--Live preview of model processing
+- Live preview of model processing
 	
 - Instant results
 	
--Dramatically faster processing
+- Dramatically faster processing
 	
--Updated UI
+- Updated UI
 	
 -Adjustable confidence parameter for R-CNN
 Version 3 - 
