@@ -12,7 +12,7 @@ import datetime
 # Variable definitions
 confidence = 0.5
 disease = False
-
+scale_factor = 0.5
 # Folder clearing
 output_dir = '/Users/joshua.stanley/Desktop/Science Research/Model outputs/R-CNN/zoomed_bounding_boxes/test_dataset/'
 
@@ -465,7 +465,7 @@ disease_dictionary = {
     ]
 }
 
-
+found_diseases = []
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -552,12 +552,10 @@ class App(customtkinter.CTk):
 
         # Video Display
         self.video_label = customtkinter.CTkLabel(self.main_frame, text='', anchor="center")
-        self.video_label.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.video_label.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         # Lower Frame for Response
-        self.lower_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
-        self.lower_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=(0, 10))
-        self.lower_frame.grid_columnconfigure(0, weight=1)
+        
 
         
 
@@ -608,13 +606,28 @@ class App(customtkinter.CTk):
         )
         self.confidence_slider.set(confidence)
         self.confidence_slider.grid(row=0, column=0, padx=20, pady=(20, 10), sticky="ew")
-
         self.confidence_label = customtkinter.CTkLabel(
             self.tabview.tab('Settings'),
             text=f'Confidence > {confidence * 100:.1f}%',
             anchor="w"
         )
         self.confidence_label.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
+        
+        self.zoom_slider = customtkinter.CTkSlider(
+            self.tabview.tab('Settings'),
+            from_=0,
+            to=1,
+            number_of_steps=100,
+            command=self.zoom_function
+        )
+        self.zoom_slider.set(scale_factor)
+        self.zoom_slider.grid(row=1, column=0, padx=20, pady=(20, 10), sticky="ew")
+        self.zoom_label = customtkinter.CTkLabel(
+            self.tabview.tab('Settings'),
+            text='zoom',
+            anchor="w"
+        )
+        self.zoom_label.grid(row=2, column=0, padx=20, pady=(20, 10), sticky="ew")
 
         # Initialize variables
         self.plant_type = 'apple'
@@ -634,7 +647,8 @@ class App(customtkinter.CTk):
             print(f"Selected file: {self.file_path}")
 
     def run_button_event(self):
-        global stopped 
+        global stopped, scale_factor
+        scale_factor = 0.4 
         stopped = False
         self.sidebar_button_run.configure(state="disabled", text="Running...")
         self.sidebar_button_stop.configure(state='enabled', text='Stop')
@@ -664,7 +678,7 @@ class App(customtkinter.CTk):
         output_details = leaf_model.get_output_details()
 
         # Print input/output details for debugging
-        print("Input Details:", input_details)
+        print("pInput Details:", input_details)
         print("Output Details:", output_details)
 
         class_name = globals()[f'{crop}_classes']
@@ -677,11 +691,15 @@ class App(customtkinter.CTk):
         confidence = float(value)
         self.confidence_label.configure(text=f'Confidence > {confidence * 100:.1f}%')
         print(f'Confidence > {confidence * 100:.1f}%')
-
+    def zoom_function(self, value):
+        global scale_factor
+        scale_factor = float(value)
+        
     def update_disease_info(self, info):
         self.disease_info_text.configure(state='normal')
         self.disease_info_text.delete("1.0", tk.END)
         self.disease_info_text.insert(tk.END, info)
+
         self.disease_info_text.configure(state='disabled')
 
     def live_detection_thread(self):
@@ -696,7 +714,7 @@ class App(customtkinter.CTk):
                 break
 
             # Resize the frame for zoom-out effect (scale factor < 1)
-            scale_factor = 0.5  # Adjust this factor as needed (e.g., 0.5 for 50% size)
+              # Adjust this factor as needed (e.g., 0.5 for 50% size)
             frame = cv2.resize(frame, (0, 0), fx=scale_factor, fy=scale_factor)
 
             results = model(frame)
@@ -731,7 +749,7 @@ class App(customtkinter.CTk):
                         prediction = leaf_model.get_tensor(output_details[0]['index'])  # This will give you the raw output array
 
                         # Fixed preprocessing pipeline
-                        confidence_threshold = 0.5  # Set your desired confidence threshold
+                        confidence_threshold = 0.4  # Set your desired confidence threshold
 
                         predicted_class = np.argmax(prediction[0])
                         conf_model = prediction[0][predicted_class]  # Get confidence for the predicted class
@@ -772,12 +790,13 @@ class App(customtkinter.CTk):
         model = YOLO('/Users/joshua.stanley/Desktop/train32/weights/best.pt')
         model.overrides['verbose'] = False
         cap = cv2.VideoCapture(self.file_path)
+        
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
-
-            scale_factor = 0.1
+            
+            
             frame = cv2.resize(frame, (0, 0), fx=scale_factor, fy=scale_factor)
 
             results = model(frame)
@@ -809,7 +828,7 @@ class App(customtkinter.CTk):
                         prediction = leaf_model.get_tensor(output_details[0]['index'])  # This will give you the raw output array
 
                         # Fixed preprocessing pipeline
-                        confidence_threshold = 0.5  # Set your desired confidence threshold
+                        confidence_threshold = 0.4  # Set your desired confidence threshold
 
                         predicted_class = np.argmax(prediction[0])
                         conf_model = prediction[0][predicted_class]  # Get confidence for the predicted class
@@ -825,8 +844,14 @@ class App(customtkinter.CTk):
 
                         print(class_label)
 
-                        disease_info = disease_dictionary[self.plant_type][predicted_class]
-                        self.update_disease_info(disease_info['description'])
+                        try:
+                            disease_info = disease_dictionary[self.plant_type][predicted_class]
+                            if disease_info['description'] not in found_diseases:
+                                found_diseases.append(disease_info['description'])
+                                found_diseases.append('\n')
+                                self.update_disease_info(found_diseases)
+                        except:
+                            pass
 
                         # Draw rectangle and label
                         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
