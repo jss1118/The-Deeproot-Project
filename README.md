@@ -137,6 +137,11 @@ Math
 
 This project involved running and testing my models on a Raspberry Pi 5 and Hailo 8L AI chip. There is some code included for the conversion and interaction with these models, as well as other parts including the RPI 5. 
 
+
+<img width="743" alt="Screenshot 2024-12-27 at 5 45 25 PM" src="https://github.com/user-attachments/assets/e0f3ecb8-6205-47da-88f9-8feec1d91001" />
+
+
+
 # Section 6 - Version history
 
 All 4 completed versions of this application are included in this repository.
@@ -144,6 +149,11 @@ All 4 completed versions of this application are included in this repository.
 Version 1 - 
 
 This was the initial application. It was able to process pre recorded videos using the main deep learning backend detailed in section 3. It processed a 1 minute video on an average of 2-5 minutes. The output of the models would then be very briefly displayed. The accuracy of this application was near 0%. 
+
+
+
+
+<img width="1095" alt="Screenshot 2024-12-03 at 12 37 55 PM" src="https://github.com/user-attachments/assets/27f0ebcb-81a7-465f-b78a-4445caba034e" />
 
 Version 2 -
 
@@ -160,7 +170,10 @@ It included:
 - Dramatically faster processing
 	
 - Updated UI
-	
+
+
+
+ 
 -Adjustable confidence parameter for R-CNN
 Version 3 - 
 	
@@ -169,4 +182,7 @@ This version fixed extreme class bias by adding a model selection feature, runni
 Version 4 -
 	
 This version mainly updated the GUI, adding a disease info panel for treatment options and disease context. As well, it added a zoom feature to the settings tab to make viewing the crop feed much easier. 
+
+<img width="1184" alt="Screenshot 2024-12-21 at 11 13 14 PM" src="https://github.com/user-attachments/assets/aaae9850-4705-4d1f-81f4-99f44b2f6d5a" />
+
 
