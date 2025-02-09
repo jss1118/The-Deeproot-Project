@@ -10,6 +10,17 @@ Creating a cost effective, real time, Python deep learning application for the e
 
 
 
+
+
+------UPCOMING UPDATE-------
+In the next few months, we expect a fully native iOS application to be available, along with the possibility of a native macOS app as well. 
+Ubuntu and most other linux distributions should also expect to see a native application come.
+As for Windows, due to compatability issues, a native user interface is not expected to arrive at least until after the other
+apps are finished.
+
+
+
+
 This repository is organized into 6 sections:
 
 
