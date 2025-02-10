@@ -1,6 +1,8 @@
 # Josh Stanley
 
-# Broward County Science Fair
+# Submission for Florida State Science Fair
+
+
 
 
 Creating a cost effective, real time, Python deep learning application for the early detection of plant disease
@@ -16,7 +18,7 @@ Creating a cost effective, real time, Python deep learning application for the e
 In the next few months, we expect a fully native iOS application to be available, along with the possibility of a native macOS app as well. 
 Ubuntu and most other linux distributions should also expect to see a native application come.
 As for Windows, due to compatability issues, a native user interface is not expected to arrive at least until after the other
-apps are finished.
+apps are finished. At the bottom of this page, regular updates will be made providing prototype images for the app.
 
 
 
@@ -195,5 +197,11 @@ Version 4 -
 This version mainly updated the GUI, adding a disease info panel for treatment options and disease context. As well, it added a zoom feature to the settings tab to make viewing the crop feed much easier. 
 
 <img width="1184" alt="Screenshot 2024-12-21 at 11 13 14 PM" src="https://github.com/user-attachments/assets/aaae9850-4705-4d1f-81f4-99f44b2f6d5a" />
+
+------------------------iOS application beta images--------------
+
+
+<img width="285" alt="Screenshot 2025-02-10 at 3 29 42 PM" src="https://github.com/user-attachments/assets/549b091a-2732-40bd-8b6a-a5d2f2180873" />
+
 
 
