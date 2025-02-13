@@ -5,10 +5,11 @@
 
 
 
-Creating a cost effective, real time, Python deep learning application for the early detection of plant disease
+Creating a cost effective, real time, deep learning application for the early detection of plant disease
 
-<img width="1190" alt="Screenshot 2025-01-12 at 7 45 44 PM" src="https://github.com/user-attachments/assets/8759f21e-4eac-4fc4-99d3-bcfbdf0b85fb" />
 
+
+<img width="285" alt="Screenshot 2025-02-10 at 3 29 42 PM" src="https://github.com/user-attachments/assets/d7601256-d96f-4879-ac46-fa9ddfaa97d1" />
 
 
 
@@ -47,6 +48,8 @@ Section 6 - Version history
 # Section 1 - Overview of repository
 
 This repository contains all code used in the development of my project. It has been organized in folders for their different use cases. The final python application is listed in its own directory as Science Research Final Application.py. The application will not function properly without the necessary packages installed, highlighted in Section 4. 
+
+<img width="1190" alt="Screenshot 2025-01-12 at 7 45 44 PM" src="https://github.com/user-attachments/assets/8759f21e-4eac-4fc4-99d3-bcfbdf0b85fb" />
 
 # Section 2 - Project organization and directories
 
