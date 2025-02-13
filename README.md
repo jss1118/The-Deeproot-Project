@@ -8,8 +8,9 @@
 Creating a cost effective, real time, deep learning application for the early detection of plant disease
 
 
+<img width="293" alt="Screenshot 2025-02-12 at 8 29 47 PM" src="https://github.com/user-attachments/assets/ddf6f7c6-5ce0-42ef-84d2-93d1c2913304" />
 
-<img width="285" alt="Screenshot 2025-02-10 at 3 29 42 PM" src="https://github.com/user-attachments/assets/d7601256-d96f-4879-ac46-fa9ddfaa97d1" />
+
 
 
 
