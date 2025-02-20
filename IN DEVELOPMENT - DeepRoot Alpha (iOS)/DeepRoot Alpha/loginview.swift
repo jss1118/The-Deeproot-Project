@@ -1,10 +1,171 @@
-// Imports
 import SwiftUI
 import UIKit
 import CoreML
 import Vision
+import AVFoundation
 
-// Startup
+// MARK: - Camera ViewModel
+
+class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+    // MARK: - Properties
+    let session = AVCaptureSession()
+    private let videoOutput = AVCaptureVideoDataOutput()
+    @Published var detections: [VNRecognizedObjectObservation] = []
+    private var detectionRequest: VNCoreMLRequest?
+    private let videoQueue = DispatchQueue(label: "videoQueue")
+    
+    // MARK: - Initialization
+    override init() {
+        super.init()
+        setupSession()
+        setupModel()
+    }
+    
+    /// Configures the capture session
+    private func setupSession() {
+        session.sessionPreset = .high
+        
+        // Configure input from the camera
+        guard let device = AVCaptureDevice.default(for: .video),
+              let input = try? AVCaptureDeviceInput(device: device) else {
+            print("Could not create video device input.")
+            return
+        }
+        session.addInput(input)
+        
+        // Configure output to process video frames
+        videoOutput.videoSettings = [
+            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+        ]
+        videoOutput.alwaysDiscardsLateVideoFrames = true
+        videoOutput.setSampleBufferDelegate(self, queue: videoQueue)
+        session.addOutput(videoOutput)
+    }
+    
+    /// Loads the CoreML object detection model and sets up the Vision request
+    private func setupModel() {
+        do {
+            // Replace `MyObjectDetector` or `best()` with your actual CoreML model class or reference
+            let mlModel = try VNCoreMLModel(for: best().model)
+            detectionRequest = VNCoreMLRequest(model: mlModel, completionHandler: visionRequestDidComplete)
+            detectionRequest?.imageCropAndScaleOption = .scaleFill
+        } catch {
+            print("Error setting up the CoreML model: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Starts the capture session
+    func startSession() {
+        session.startRunning()
+    }
+    
+    /// Stops the capture session
+    func stopSession() {
+        session.stopRunning()
+    }
+    
+    // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+    func captureOutput(_ output: AVCaptureOutput,
+                       didOutput sampleBuffer: CMSampleBuffer,
+                       from connection: AVCaptureConnection) {
+        guard let detectionRequest = detectionRequest,
+              let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
+        
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
+        do {
+            try handler.perform([detectionRequest])
+        } catch {
+            print("Failed to perform detection: \(error.localizedDescription)")
+        }
+    }
+    
+    // MARK: - Vision Completion Handler
+    private func visionRequestDidComplete(request: VNRequest, error: Error?) {
+        if let error = error {
+            print("Vision error: \(error.localizedDescription)")
+            return
+        }
+        if let results = request.results as? [VNRecognizedObjectObservation] {
+            print("Number of detections: \(results.count)")
+            DispatchQueue.main.async {
+                self.detections = results
+            }
+        }
+    }
+}
+
+// MARK: - Camera Preview
+
+/// A UIViewRepresentable that wraps an AVCaptureVideoPreviewLayer to display the live camera feed.
+struct CameraPreview: UIViewRepresentable {
+    let session: AVCaptureSession
+
+    class VideoPreviewView: UIView {
+        override class var layerClass: AnyClass {
+            AVCaptureVideoPreviewLayer.self
+        }
+        
+        var videoPreviewLayer: AVCaptureVideoPreviewLayer {
+            layer as! AVCaptureVideoPreviewLayer
+        }
+    }
+    
+    func makeUIView(context: Context) -> VideoPreviewView {
+        let view = VideoPreviewView()
+        view.videoPreviewLayer.session = session
+        view.videoPreviewLayer.videoGravity = .resizeAspectFill
+        return view
+    }
+    
+    func updateUIView(_ uiView: VideoPreviewView, context: Context) {
+        // No update needed
+    }
+}
+
+// MARK: - Camera View
+
+/// A SwiftUI view that displays the camera preview and overlays detection results.
+struct CameraView: View {
+    @StateObject private var cameraVM = CameraViewModel()
+    
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                // Display the live camera feed.
+                CameraPreview(session: cameraVM.session)
+                    .ignoresSafeArea()
+                
+                // Overlay bounding boxes for each detection
+                ForEach(cameraVM.detections, id: \.uuid) { detection in
+                    let bbox = detection.boundingBox
+                    // Convert normalized bounding box [0..1] to the actual view coordinates
+                    let boxWidth = geo.size.width * bbox.width
+                    let boxHeight = geo.size.height * bbox.height
+                    let xPos = geo.size.width * bbox.midX
+                    // Flip y-axis because Vision’s origin is bottom-left,
+                    // but SwiftUI’s origin is top-left
+                    let yPos = geo.size.height * (1 - bbox.midY)
+                    
+                    Rectangle()
+                        .stroke(Color.red, lineWidth: 2)
+                        .frame(width: boxWidth, height: boxHeight)
+                        .position(x: xPos, y: yPos)
+                }
+            }
+            .onAppear {
+                cameraVM.startSession()
+            }
+            .onDisappear {
+                cameraVM.stopSession()
+            }
+        }
+    }
+}
+
+// MARK: - Login & Main Views
+
 var logran: Bool = false
 
 @main
@@ -33,7 +194,11 @@ struct LoginView: View {
     var body: some View {
         Group {
             if loggedin {
-                MainView(loggedin: $loggedin, username: $username, password: $password)
+                // Wrap MainView in a NavigationView so NavigationLink works properly.
+                NavigationView {
+                    MainView(loggedin: $loggedin, username: $username, password: $password)
+                        .navigationBarHidden(true)
+                }
             } else {
                 ZStack {
                     // Background gradient
@@ -99,13 +264,11 @@ struct MainView: View {
     @Binding var loggedin: Bool
     @Binding var username: String
     @Binding var password: String
-    @State var settingspressed: Bool = false
-    
-    // State variables for camera integration
+
+    // State variable to trigger the camera sheet.
     @State private var showCamera = false
-    @State private var capturedImage: UIImage? = nil
     
-    // Corrected crop list declaration.
+    // Crop list declaration.
     let crop_type: [String] = [
         "Apple", "Casava", "Cherry", "Chili", "Citrus", "Coffee",
         "Corn", "Cucumber", "Grape", "Guava", "Jamun", "Lemon",
@@ -113,80 +276,38 @@ struct MainView: View {
         "Soybean", "Strawberry", "Sugarcane", "Tea", "Tomato"
     ]
     @State private var model: String = ""
-    // State variable to store the selected crop type.
     @State private var selectedCrop: String = ""
     
     var body: some View {
-        Group {
-            if settingspressed {
-                SettingsView()
-            } else {
-                ZStack {
-                    // Background gradient
-                    LinearGradient(gradient: Gradient(colors: [.blue.opacity(0.7), .green]),
-                                   startPoint: .topLeading,
-                                   endPoint: .bottomTrailing)
-                        .ignoresSafeArea()
-
-                    // Top buttons
-                    HStack(spacing: -10) {
-                        Button(action: {
-                            settingspressed.toggle()
-                            print("Settings Button Pressed")
-                        }) {
-                            Label("Settings", systemImage: "gear")
-                                .font(.system(size: 15))
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                                .frame(width: 130, height: 55)
-                        }
-
-                        Button(action: {
-                            print("Recents Button Pressed")
-                        }) {
-                            Label("Recents", systemImage: "camera.macro")
-                                .font(.system(size: 15))
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                                .frame(width: 145, height: 55)
-                        }
-
-                        Button(action: {
-                            print("Forums Button Pressed")
-                        }) {
-                            Label("Forums", systemImage: "bubble.right")
-                                .font(.system(size: 15))
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                                .frame(width: 125, height: 55)
-                        }
-                    }
-                    .padding(.top, 700)
-
+        ZStack {
+            // Background gradient
+            LinearGradient(gradient: Gradient(colors: [.blue.opacity(0.7), .green]),
+                           startPoint: .topLeading,
+                            endPoint: .bottomTrailing)
+                .ignoresSafeArea()
+            
+            VStack {
+                Spacer()
+                
+                // Center group: welcome text and diagnosis/crop buttons
+                VStack(spacing: 200) {
                     // Centered welcome text
                     VStack {
                         Text("Welcome.")
                             .font(.system(size: 35, weight: .bold, design: .default))
                             .frame(width: 190, height: 40)
-
+                            .padding()
+                        
                         Text("Diagnose the root of disease with the click of a button")
                             .font(.system(size: 20, weight: .bold, design: .default))
                             .frame(width: 300, height: 80)
                             .multilineTextAlignment(.center)
-                            .padding(.bottom, 600)
                     }
-
-                    // Diagnosis button and Crop type Menu in the center
+                    
+                    // Diagnosis button and Crop type Menu
                     HStack(spacing: 40) {
                         Button(action: {
-                            print("Diagnosis Button Pressed")
-                            showCamera = true  // Present the camera sheet
+                            showCamera = true  // Set the state variable to true to show the camera sheet.
                         }) {
                             Label {
                                 Text("Diagnosis")
@@ -200,19 +321,21 @@ struct MainView: View {
                             .frame(width: 200, height: 200)
                             .background(LinearGradient(gradient: Gradient(colors: [.white, .blue]),
                                                        startPoint: .topLeading,
-                                                       endPoint: .bottomTrailing)
-                                            .ignoresSafeArea())
+                                                       endPoint: .bottomTrailing))
                             .clipShape(Circle())
                         }
-                        .padding(.top, 600)
+                        .sheet(isPresented: $showCamera) {
+                            CameraView()
+                        }
 
+                        
                         Menu {
-                            // Use ForEach to create menu items for each crop type.
+                            // Create menu items for each crop type.
                             ForEach(crop_type, id: \.self) { type in
                                 Button(action: {
                                     selectedCrop = type
                                     print(type)
-                                    model = "model\(selectedCrop.lowercased())\(())"
+                                    model = "model\(selectedCrop.lowercased())"
                                     print(model)
                                 }) {
                                     Text(type)
@@ -224,76 +347,117 @@ struct MainView: View {
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(5)
-                                
                         }
-                        .padding(.top, 600)
+                        .padding(.bottom, 100)
                     }
-                    .padding(.bottom, 500)
                 }
-                .onAppear {
-                    loggedin = true
-                    print("Logged in. Username: \(username), Password: \(password)")
+                
+                Spacer()
+                
+                // Bottom buttons: Settings, Recents, Forums
+                HStack(spacing: 16) {
+                    NavigationLink(destination: SettingsView()) {
+                        Label("Settings", systemImage: "gear")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    
+                    Button(action: {
+                        print("Recents Button Pressed")
+                    }) {
+                        Label("Recents", systemImage: "camera.macro")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    
+                    Button(action: {
+                        print("Forums Button Pressed")
+                    }) {
+                        Label("Forums", systemImage: "bubble.right")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
                 }
-                // Present the ImagePicker when showCamera is true
-                .sheet(isPresented: $showCamera) {
-                    ImagePicker(sourceType: .camera, image: $capturedImage)
-                }
+                .padding(.bottom, 30)
             }
+        }
+        .onAppear {
+            print("Logged in. Username: \(username), Password: \(password)")
         }
     }
 }
 
 struct SettingsView: View {
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-        }
-    }
-}
-
-/// A UIViewControllerRepresentable wrapper for UIImagePickerController.
-struct ImagePicker: UIViewControllerRepresentable {
-    var sourceType: UIImagePickerController.SourceType = .camera
-    @Binding var image: UIImage?
-    
-    @Environment(\.presentationMode) var presentationMode
-    
-    func makeUIViewController(context: Context) -> UIImagePickerController {
-        let picker = UIImagePickerController()
-        picker.sourceType = sourceType
-        picker.delegate = context.coordinator
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: UIImagePickerController,
-                                context: Context) { }
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    // Coordinator to handle UIImagePickerController events.
-    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-        var parent: ImagePicker
-        
-        init(_ parent: ImagePicker) {
-            self.parent = parent
-        }
-        
-        func imagePickerController(_ picker: UIImagePickerController,
-                                   didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let uiImage = info[.originalImage] as? UIImage {
-                parent.image = uiImage
+        // SettingsView is embedded in its own NavigationView so it has its own navigation bar.
+        NavigationView {
+            ZStack {
+                Color(.systemGray6).ignoresSafeArea()
+                
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    Button(action: {
+                        print("Model btn pressed")
+                    }) {
+                        Text("Models")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 20)
+                    }
+                    
+                    Button(action: {
+                        print("Theme btn pressed")
+                    }) {
+                        Text("Theme")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 20)
+                    }
+                    
+                    Button(action: {
+                        print("Beta btn pressed")
+                    }) {
+                        Text("Beta Development")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 20)
+                    }
+                    
+                    Spacer()
+                    
+                    Image("logotransparent")
+                        .resizable()
+                        .frame(width: 400, height: 400)
+                        .aspectRatio(contentMode: .fill)
+                        .padding()
+                    
+                    Spacer()
+                }
             }
-            parent.presentationMode.wrappedValue.dismiss()
-        }
-        
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            parent.presentationMode.wrappedValue.dismiss()
+            .navigationBarTitle("Settings", displayMode: .inline)
         }
     }
 }
 
+// MARK: - Preview
 #Preview {
     LoginView(username: "", password: "")
 }

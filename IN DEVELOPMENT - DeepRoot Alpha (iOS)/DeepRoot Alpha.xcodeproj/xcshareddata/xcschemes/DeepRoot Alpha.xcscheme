@@ -18,7 +18,7 @@
                BlueprintIdentifier = "C7DBD2172D5EB6000096B515"
                BuildableName = "DeepRoot Alpha.app"
                BlueprintName = "DeepRoot Alpha"
-               ReferencedContainer = "container:DeepRoot Alpha.xcodeproj">
+               ReferencedContainer = "container:Deeproot Alpha.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -38,7 +38,7 @@
                BlueprintIdentifier = "C7DBD2272D5EB6010096B515"
                BuildableName = "DeepRoot AlphaTests.xctest"
                BlueprintName = "DeepRoot AlphaTests"
-               ReferencedContainer = "container:DeepRoot Alpha.xcodeproj">
+               ReferencedContainer = "container:Deeproot Alpha.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -49,7 +49,7 @@
                BlueprintIdentifier = "C7DBD2312D5EB6010096B515"
                BuildableName = "DeepRoot AlphaUITests.xctest"
                BlueprintName = "DeepRoot AlphaUITests"
-               ReferencedContainer = "container:DeepRoot Alpha.xcodeproj">
+               ReferencedContainer = "container:Deeproot Alpha.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,7 +71,7 @@
             BlueprintIdentifier = "C7DBD2172D5EB6000096B515"
             BuildableName = "DeepRoot Alpha.app"
             BlueprintName = "DeepRoot Alpha"
-            ReferencedContainer = "container:DeepRoot Alpha.xcodeproj">
+            ReferencedContainer = "container:Deeproot Alpha.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -88,7 +88,7 @@
             BlueprintIdentifier = "C7DBD2172D5EB6000096B515"
             BuildableName = "DeepRoot Alpha.app"
             BlueprintName = "DeepRoot Alpha"
-            ReferencedContainer = "container:DeepRoot Alpha.xcodeproj">
+            ReferencedContainer = "container:Deeproot Alpha.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

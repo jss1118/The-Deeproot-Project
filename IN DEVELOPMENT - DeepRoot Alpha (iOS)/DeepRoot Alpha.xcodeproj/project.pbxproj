@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C7DBD2132D5EB6000096B515 /* Build configuration list for PBXProject "DeepRoot Alpha" */;
+			buildConfigurationList = C7DBD2132D5EB6000096B515 /* Build configuration list for PBXProject "Deeproot Alpha" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -523,7 +523,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C7DBD2132D5EB6000096B515 /* Build configuration list for PBXProject "DeepRoot Alpha" */ = {
+		C7DBD2132D5EB6000096B515 /* Build configuration list for PBXProject "Deeproot Alpha" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C7DBD23A2D5EB6010096B515 /* Debug */,
