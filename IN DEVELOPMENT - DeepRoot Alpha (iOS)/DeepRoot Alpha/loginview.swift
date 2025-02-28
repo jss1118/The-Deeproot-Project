@@ -5,20 +5,24 @@ import Vision
 import AVFoundation
 
 // MARK: - Camera ViewModel
-
 class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     // MARK: - Properties
     let session = AVCaptureSession()
     private let videoOutput = AVCaptureVideoDataOutput()
+    
+    // Array of VNRequests, as recommended by Apple’s sample code
+    private var requests = [VNRequest]()
+    
+    // Store the recognized observations so SwiftUI can display bounding boxes
     @Published var detections: [VNRecognizedObjectObservation] = []
-    private var detectionRequest: VNCoreMLRequest?
+    
     private let videoQueue = DispatchQueue(label: "videoQueue")
     
     // MARK: - Initialization
     override init() {
         super.init()
         setupSession()
-        setupModel()
+        setupVision()  // Apple’s recommended approach
     }
     
     /// Configures the capture session
@@ -39,21 +43,52 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         ]
         videoOutput.alwaysDiscardsLateVideoFrames = true
         videoOutput.setSampleBufferDelegate(self, queue: videoQueue)
-        session.addOutput(videoOutput)
+        
+        if session.canAddOutput(videoOutput) {
+            session.addOutput(videoOutput)
+        }
+        if let connection = videoOutput.connection(with: .video) {
+            if #available(iOS 17.0, *) {
+                // Rotation angles are specified in degrees:
+                //  0   = portrait (no rotation)
+                //  90  = landscapeLeft
+                //  180 = portraitUpsideDown
+                //  270 = landscapeRight
+                connection.videoRotationAngle = 0  // Equivalent to .portrait
+            } else {
+                // Fallback for iOS < 17
+                connection.videoOrientation = .portrait
+            }
+        }
     }
     
-    /// Loads the CoreML object detection model and sets up the Vision request
-    private func setupModel() {
+    /// Loads the CoreML model and creates a Vision request, storing it in the `requests` array
+    private func setupVision() {
         do {
-            // Replace `MyObjectDetector` or `best()` with your actual CoreML model class or reference
-            let mlModel = try VNCoreMLModel(for: best().model)
-            detectionRequest = VNCoreMLRequest(model: mlModel, completionHandler: visionRequestDidComplete)
-            detectionRequest?.imageCropAndScaleOption = .scaleFill
+            // 1) Instantiate the model with thresholds:
+            let config = MLModelConfiguration()
+            let yoloModel = try yolocore(configuration: config)
+           
+            // 2) Create a Vision model from the instance’s .model:
+            let visionModel = try VNCoreMLModel(for: yoloModel.model)
+            
+            // Create a Vision request with a completion handler.
+            let objectRecognition = VNCoreMLRequest(model: visionModel) { [weak self] (request, error) in
+                guard let self = self else { return }
+                self.visionRequestDidComplete(request: request, error: error)
+            }
+            
+            // 3) Use centerCrop option to match typical YOLO preprocessing
+            objectRecognition.imageCropAndScaleOption = .centerCrop
+
+            // Store the request
+            requests = [objectRecognition]
+            
         } catch {
             print("Error setting up the CoreML model: \(error.localizedDescription)")
         }
     }
-    
+    //h b
     /// Starts the capture session
     func startSession() {
         session.startRunning()
@@ -68,14 +103,20 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     func captureOutput(_ output: AVCaptureOutput,
                        didOutput sampleBuffer: CMSampleBuffer,
                        from connection: AVCaptureConnection) {
-        guard let detectionRequest = detectionRequest,
+        guard !requests.isEmpty,
               let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
+        // Use .up orientation to match training, adjust if needed.
+        let handler = VNImageRequestHandler(
+            cvPixelBuffer: pixelBuffer,
+            orientation: .up,
+            options: [:]
+        )
+        
         do {
-            try handler.perform([detectionRequest])
+            try handler.perform(requests)
         } catch {
             print("Failed to perform detection: \(error.localizedDescription)")
         }
@@ -87,20 +128,38 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             print("Vision error: \(error.localizedDescription)")
             return
         }
-        if let results = request.results as? [VNRecognizedObjectObservation] {
-            print("Number of detections: \(results.count)")
-            DispatchQueue.main.async {
-                self.detections = results
+        
+        guard let observations = request.results as? [VNRecognizedObjectObservation] else {
+            print("No recognized objects returned.")
+            return
+        }
+        
+        // Filter out observations whose top label’s confidence is below 0.5:
+        let confidenceThreshold: VNConfidence = 0.25
+        let filtered = observations.filter { obs in
+            guard let bestLabel = obs.labels.first else { return false }
+            return bestLabel.confidence >= confidenceThreshold
+        }
+        
+        // Log raw bounding box values for debugging.
+        print("Total detections: \(observations.count). Kept after filtering: \(filtered.count)")
+        for detection in filtered {
+            if let topLabel = detection.labels.first {
+                print("Detected: \(topLabel.identifier) [confidence: \(topLabel.confidence)] with bbox: \(detection.boundingBox)")
             }
+        }
+        
+        DispatchQueue.main.async {
+            self.detections = filtered
         }
     }
 }
 
 // MARK: - Camera Preview
-
 /// A UIViewRepresentable that wraps an AVCaptureVideoPreviewLayer to display the live camera feed.
 struct CameraPreview: UIViewRepresentable {
     let session: AVCaptureSession
+    var onPreviewLayerReady: ((AVCaptureVideoPreviewLayer) -> Void)? = nil
 
     class VideoPreviewView: UIView {
         override class var layerClass: AnyClass {
@@ -116,6 +175,11 @@ struct CameraPreview: UIViewRepresentable {
         let view = VideoPreviewView()
         view.videoPreviewLayer.session = session
         view.videoPreviewLayer.videoGravity = .resizeAspectFill
+        
+        // Pass the preview layer back so that bounding box conversion can be done
+        DispatchQueue.main.async {
+            self.onPreviewLayerReady?(view.videoPreviewLayer)
+        }
         return view
     }
     
@@ -125,34 +189,43 @@ struct CameraPreview: UIViewRepresentable {
 }
 
 // MARK: - Camera View
-
+/// A SwiftUI view that displays the camera preview and overlays detection results.
+// MARK: - Camera View
+/// A SwiftUI view that displays the camera preview and overlays detection results.
+// MARK: - Camera View
 /// A SwiftUI view that displays the camera preview and overlays detection results.
 struct CameraView: View {
     @StateObject private var cameraVM = CameraViewModel()
+    @State private var previewLayer: AVCaptureVideoPreviewLayer?
     
     var body: some View {
-        GeometryReader { geo in
+        GeometryReader { _ in
             ZStack {
-                // Display the live camera feed.
-                CameraPreview(session: cameraVM.session)
-                    .ignoresSafeArea()
+                // Display the live camera feed
+                CameraPreview(session: cameraVM.session, onPreviewLayerReady: { layer in
+                    previewLayer = layer
+                })
+                .ignoresSafeArea()
                 
-                // Overlay bounding boxes for each detection
+                // Only draw bounding boxes if the preview layer is available.
                 ForEach(cameraVM.detections, id: \.uuid) { detection in
-                    let bbox = detection.boundingBox
-                    // Convert normalized bounding box [0..1] to the actual view coordinates
-                    let boxWidth = geo.size.width * bbox.width
-                    let boxHeight = geo.size.height * bbox.height
-                    let xPos = geo.size.width * bbox.midX
-                    // Flip y-axis because Vision’s origin is bottom-left,
-                    // but SwiftUI’s origin is top-left
-                    let yPos = geo.size.height * (1 - bbox.midY)
-                    
-                    Rectangle()
-                        .stroke(Color.red, lineWidth: 2)
-                        .frame(width: boxWidth, height: boxHeight)
-                        .position(x: xPos, y: yPos)
+                    if let layer = previewLayer {
+                        // 1) Compute rect in a 'do' block (or local function)
+                        let convertedRect: CGRect = {
+                            var normRect = detection.boundingBox
+                            normRect.origin.y = 1 - normRect.origin.y - normRect.height
+                            return layer.layerRectConverted(fromMetadataOutputRect: normRect)
+                        }()
+                        
+                        // 2) Return the actual view
+                        Rectangle()
+                            .stroke(Color.red, lineWidth: 2)
+                            .frame(width: convertedRect.width, height: convertedRect.height)
+                            .position(x: convertedRect.midX, y: convertedRect.midY)
+                    }
                 }
+
+                
             }
             .onAppear {
                 cameraVM.startSession()
@@ -164,8 +237,9 @@ struct CameraView: View {
     }
 }
 
-// MARK: - Login & Main Views
 
+
+// MARK: - Login & Main Views
 var logran: Bool = false
 
 @main
@@ -194,21 +268,19 @@ struct LoginView: View {
     var body: some View {
         Group {
             if loggedin {
-                // Wrap MainView in a NavigationView so NavigationLink works properly.
                 NavigationView {
                     MainView(loggedin: $loggedin, username: $username, password: $password)
                         .navigationBarHidden(true)
                 }
             } else {
                 ZStack {
-                    // Background gradient
-                    LinearGradient(gradient: Gradient(colors: [.blue.opacity(0.7), .green]),
+                    LinearGradient(gradient: Gradient(colors: [.gray.opacity(0.7), .black.opacity(0.65)]),
                                    startPoint: .topLeading,
                                    endPoint: .bottomTrailing)
                         .ignoresSafeArea()
 
                     VStack(spacing: 20) {
-                        Text("Deeproot AI")
+                        Text("Deeproot A.I")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -232,7 +304,7 @@ struct LoginView: View {
                                 .disableAutocorrection(true)
                         }
                         .background(RoundedRectangle(cornerRadius: 15)
-                                        .fill(Color.white.opacity(0.2)))
+                            .fill(Color.white.opacity(0.2)))
                         .padding()
 
                         Button(action: {
@@ -251,7 +323,6 @@ struct LoginView: View {
                     .padding()
                 }
                 .onDisappear {
-                    // Reset username and password when the view disappears
                     username = ""
                     password = ""
                 }
@@ -280,18 +351,15 @@ struct MainView: View {
     
     var body: some View {
         ZStack {
-            // Background gradient
-            LinearGradient(gradient: Gradient(colors: [.blue.opacity(0.7), .green]),
+            LinearGradient(gradient: Gradient(colors: [.gray.opacity(0.7), .black.opacity(0.65)]),
                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing)
+                           endPoint: .bottomTrailing)
                 .ignoresSafeArea()
             
             VStack {
                 Spacer()
                 
-                // Center group: welcome text and diagnosis/crop buttons
                 VStack(spacing: 200) {
-                    // Centered welcome text
                     VStack {
                         Text("Welcome.")
                             .font(.system(size: 35, weight: .bold, design: .default))
@@ -304,10 +372,9 @@ struct MainView: View {
                             .multilineTextAlignment(.center)
                     }
                     
-                    // Diagnosis button and Crop type Menu
                     HStack(spacing: 40) {
                         Button(action: {
-                            showCamera = true  // Set the state variable to true to show the camera sheet.
+                            showCamera = true  // Show the camera sheet.
                         }) {
                             Label {
                                 Text("Diagnosis")
@@ -317,7 +384,6 @@ struct MainView: View {
                                 Image(systemName: "camera")
                                     .font(.system(size: 40))
                             }
-                            .padding()
                             .frame(width: 200, height: 200)
                             .background(LinearGradient(gradient: Gradient(colors: [.white, .blue]),
                                                        startPoint: .topLeading,
@@ -327,10 +393,9 @@ struct MainView: View {
                         .sheet(isPresented: $showCamera) {
                             CameraView()
                         }
-
+                        .padding(.bottom, 100)
                         
                         Menu {
-                            // Create menu items for each crop type.
                             ForEach(crop_type, id: \.self) { type in
                                 Button(action: {
                                     selectedCrop = type
@@ -354,8 +419,7 @@ struct MainView: View {
                 
                 Spacer()
                 
-                // Bottom buttons: Settings, Recents, Forums
-                HStack(spacing: 16) {
+                HStack(spacing: 50) {
                     NavigationLink(destination: SettingsView()) {
                         Label("Settings", systemImage: "gear")
                             .foregroundColor(.white)
@@ -364,20 +428,8 @@ struct MainView: View {
                             .cornerRadius(10)
                     }
                     
-                    Button(action: {
-                        print("Recents Button Pressed")
-                    }) {
-                        Label("Recents", systemImage: "camera.macro")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                    }
-                    
-                    Button(action: {
-                        print("Forums Button Pressed")
-                    }) {
-                        Label("Forums", systemImage: "bubble.right")
+                    NavigationLink(destination: DeveloperView()) {
+                        Label("Developer", systemImage: "hammer.circle")
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.blue)
@@ -395,13 +447,13 @@ struct MainView: View {
 
 struct SettingsView: View {
     var body: some View {
-        // SettingsView is embedded in its own NavigationView so it has its own navigation bar.
         NavigationView {
             ZStack {
-                Color(.systemGray6).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(colors: [.gray.opacity(0.7), .black.opacity(0.65)]),
+                               startPoint: .topLeading,
+                               endPoint: .bottomTrailing).ignoresSafeArea()
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    
                     Button(action: {
                         print("Model btn pressed")
                     }) {
@@ -453,6 +505,40 @@ struct SettingsView: View {
                 }
             }
             .navigationBarTitle("Settings", displayMode: .inline)
+        }
+    }
+}
+
+struct DeveloperView: View {
+    @State private var devkey: String = ""
+    var body: some View {
+        NavigationView {
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [.gray.opacity(0.7), .black.opacity(0.65)]),
+                               startPoint: .topLeading,
+                               endPoint: .bottomTrailing)
+                .ignoresSafeArea()
+                
+                VStack(spacing: 15) {
+                    Text("Enter your developer key")
+                        .font(.title)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white)
+                    Text("Get a developer key")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .frame(width: 400, height: 100, alignment: .center)
+                        .padding(.bottom, 20)
+                    
+                    TextField("Developer key", text: $devkey)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
+                }
+                .padding()
+            }
         }
     }
 }

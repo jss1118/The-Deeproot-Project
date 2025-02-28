@@ -29,9 +29,32 @@
 		C7DBD2322D5EB6010096B515 /* DeepRoot AlphaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "DeepRoot AlphaUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C75406502D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"R-CNN CoreML Models/best3.mlpackage",
+				"R-CNN CoreML Models/best4.mlpackage",
+			);
+			target = C7DBD2272D5EB6010096B515 /* DeepRoot AlphaTests */;
+		};
+		C75406512D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"R-CNN CoreML Models/best3.mlpackage",
+				"R-CNN CoreML Models/best4.mlpackage",
+			);
+			target = C7DBD2312D5EB6010096B515 /* DeepRoot AlphaUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C7DBD21A2D5EB6000096B515 /* DeepRoot Alpha */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C75406502D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaTests" target */,
+				C75406512D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaUITests" target */,
+			);
 			path = "DeepRoot Alpha";
 			sourceTree = "<group>";
 		};
