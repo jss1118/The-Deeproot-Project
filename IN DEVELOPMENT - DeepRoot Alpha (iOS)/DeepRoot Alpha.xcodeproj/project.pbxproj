@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C7F60B6E2D7376A300A576AB /* yolocore.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = C7F60B6D2D73766400A576AB /* yolocore.mlmodel */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C7DBD2292D5EB6010096B515 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,33 +31,124 @@
 		C7DBD2182D5EB6000096B515 /* DeepRoot Alpha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DeepRoot Alpha.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7DBD2282D5EB6010096B515 /* DeepRoot AlphaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "DeepRoot AlphaTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7DBD2322D5EB6010096B515 /* DeepRoot AlphaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "DeepRoot AlphaUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7F60B6D2D73766400A576AB /* yolocore.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = yolocore.mlmodel; path = "DeepRoot Alpha/R-CNN CoreML Models/yolocore.mlmodel"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		C75406502D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"CNN CoreML Models/modelapple.mlpackage",
+				"CNN CoreML Models/modelcasava.mlpackage",
+				"CNN CoreML Models/modelcherry.mlpackage",
+				"CNN CoreML Models/modelchili.mlpackage",
+				"CNN CoreML Models/modelcitrus.mlpackage",
+				"CNN CoreML Models/modelcoffee.mlpackage",
+				"CNN CoreML Models/modelcorn.mlpackage",
+				"CNN CoreML Models/modelcucumber.mlpackage",
+				"CNN CoreML Models/modelgrape.mlpackage",
+				"CNN CoreML Models/modelguava.mlpackage",
+				"CNN CoreML Models/modeljamun.mlpackage",
+				"CNN CoreML Models/modellemon.mlpackage",
+				"CNN CoreML Models/modelmango.mlpackage",
+				"CNN CoreML Models/modelpeach.mlpackage",
+				"CNN CoreML Models/modelpepper.mlpackage",
+				"CNN CoreML Models/modelponmegranat.mlpackage",
+				"CNN CoreML Models/modelpotato.mlpackage",
+				"CNN CoreML Models/modelrice.mlpackage",
+				"CNN CoreML Models/modelstrawberry.mlpackage",
+				"CNN CoreML Models/modelsugarcane.mlpackage",
+				"CNN CoreML Models/modeltea.mlpackage",
+				"CNN CoreML Models/modeltomato.mlpackage",
 				"R-CNN CoreML Models/best3.mlpackage",
 				"R-CNN CoreML Models/best4.mlpackage",
 			);
 			target = C7DBD2272D5EB6010096B515 /* DeepRoot AlphaTests */;
 		};
-		C75406512D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaUITests" target */ = {
+		C7F60B6C2D73760800A576AB /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot Alpha" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
+				"CNN CoreML Models/modelapple.mlpackage",
+				"CNN CoreML Models/modelcasava.mlpackage",
+				"CNN CoreML Models/modelcherry.mlpackage",
+				"CNN CoreML Models/modelchili.mlpackage",
+				"CNN CoreML Models/modelcitrus.mlpackage",
+				"CNN CoreML Models/modelcoffee.mlpackage",
+				"CNN CoreML Models/modelcorn.mlpackage",
+				"CNN CoreML Models/modelcucumber.mlpackage",
+				"CNN CoreML Models/modelgrape.mlpackage",
+				"CNN CoreML Models/modelguava.mlpackage",
+				"CNN CoreML Models/modeljamun.mlpackage",
+				"CNN CoreML Models/modellemon.mlpackage",
+				"CNN CoreML Models/modelmango.mlpackage",
+				"CNN CoreML Models/modelpeach.mlpackage",
+				"CNN CoreML Models/modelpepper.mlpackage",
+				"CNN CoreML Models/modelponmegranat.mlpackage",
+				"CNN CoreML Models/modelpotato.mlpackage",
+				"CNN CoreML Models/modelrice.mlpackage",
+				"CNN CoreML Models/modelstrawberry.mlpackage",
+				"CNN CoreML Models/modelsugarcane.mlpackage",
+				"CNN CoreML Models/modeltea.mlpackage",
+				"CNN CoreML Models/modeltomato.mlpackage",
+				"Preview Content/Preview Assets.xcassets",
+				"R-CNN CoreML Models/best3.mlpackage",
+				"R-CNN CoreML Models/best4.mlpackage",
+				"R-CNN CoreML Models/yolocore.mlmodel",
+			);
+			target = C7DBD2172D5EB6000096B515 /* DeepRoot Alpha */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		C764509E2D73714D003489BC /* Exceptions for "DeepRoot Alpha" folder in "Copy Bundle Resources" phase from "DeepRoot Alpha" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = C7DBD2162D5EB6000096B515 /* Resources */;
+			membershipExceptions = (
+				"CNN CoreML Models/modelapple.mlpackage",
+				"CNN CoreML Models/modelcasava.mlpackage",
+				"CNN CoreML Models/modelcherry.mlpackage",
+				"CNN CoreML Models/modelchili.mlpackage",
+				"CNN CoreML Models/modelcitrus.mlpackage",
+				"CNN CoreML Models/modelcoffee.mlpackage",
+				"CNN CoreML Models/modelcorn.mlpackage",
+				"CNN CoreML Models/modelcucumber.mlpackage",
+				"CNN CoreML Models/modelgrape.mlpackage",
+				"CNN CoreML Models/modelguava.mlpackage",
+				"CNN CoreML Models/modeljamun.mlpackage",
+				"CNN CoreML Models/modellemon.mlpackage",
+				"CNN CoreML Models/modelmango.mlpackage",
+				"CNN CoreML Models/modelpeach.mlpackage",
+				"CNN CoreML Models/modelpepper.mlpackage",
+				"CNN CoreML Models/modelponmegranat.mlpackage",
+				"CNN CoreML Models/modelpotato.mlpackage",
+				"CNN CoreML Models/modelrice.mlpackage",
+				"CNN CoreML Models/modelstrawberry.mlpackage",
+				"CNN CoreML Models/modelsugarcane.mlpackage",
+				"CNN CoreML Models/modeltea.mlpackage",
+				"CNN CoreML Models/modeltomato.mlpackage",
 				"R-CNN CoreML Models/best3.mlpackage",
 				"R-CNN CoreML Models/best4.mlpackage",
 			);
-			target = C7DBD2312D5EB6010096B515 /* DeepRoot AlphaUITests */;
 		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C7F60B692D7374E300A576AB /* Exceptions for "DeepRoot Alpha" folder in "Compile Sources" phase from "DeepRoot Alpha" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = C7F60B442D73739400A576AB /* Sources */;
+			membershipExceptions = (
+				Assets.xcassets,
+				"Preview Content/Preview Assets.xcassets",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C7DBD21A2D5EB6000096B515 /* DeepRoot Alpha */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				C7F60B6C2D73760800A576AB /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot Alpha" target */,
+				C764509E2D73714D003489BC /* Exceptions for "DeepRoot Alpha" folder in "Copy Bundle Resources" phase from "DeepRoot Alpha" target */,
+				C7F60B692D7374E300A576AB /* Exceptions for "DeepRoot Alpha" folder in "Compile Sources" phase from "DeepRoot Alpha" target */,
 				C75406502D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaTests" target */,
-				C75406512D6EA64200F87BA6 /* Exceptions for "DeepRoot Alpha" folder in "DeepRoot AlphaUITests" target */,
 			);
 			path = "DeepRoot Alpha";
 			sourceTree = "<group>";
@@ -98,6 +193,7 @@
 		C7DBD20F2D5EB6000096B515 = {
 			isa = PBXGroup;
 			children = (
+				C7F60B6D2D73766400A576AB /* yolocore.mlmodel */,
 				C7DBD21A2D5EB6000096B515 /* DeepRoot Alpha */,
 				C7DBD22B2D5EB6010096B515 /* DeepRoot AlphaTests */,
 				C7DBD2352D5EB6010096B515 /* DeepRoot AlphaUITests */,
@@ -122,9 +218,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C7DBD23C2D5EB6010096B515 /* Build configuration list for PBXNativeTarget "DeepRoot Alpha" */;
 			buildPhases = (
-				C7DBD2142D5EB6000096B515 /* Sources */,
 				C7DBD2152D5EB6000096B515 /* Frameworks */,
 				C7DBD2162D5EB6000096B515 /* Resources */,
+				C7F60B442D73739400A576AB /* Sources */,
 			);
 			buildRules = (
 			);
@@ -255,13 +351,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C7DBD2142D5EB6000096B515 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C7DBD2242D5EB6010096B515 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -273,6 +362,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C7F60B442D73739400A576AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7F60B6E2D7376A300A576AB /* yolocore.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
