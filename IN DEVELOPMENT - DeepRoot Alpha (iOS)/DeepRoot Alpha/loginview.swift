@@ -163,7 +163,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         session.startRunning()
     }
     
-    func stopSession() {
+    func stopSession( ) {
         session.stopRunning()
     }
     
@@ -192,7 +192,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             print("No recognized objects returned.")
             return
         }
-        let confidenceThreshold: VNConfidence = 0.25
+        let confidenceThreshold: VNConfidence = 0.5
         let filtered = observations.filter { obs in
             guard let bestLabel = obs.labels.first else { return false }
             return bestLabel.confidence >= confidenceThreshold
@@ -472,7 +472,7 @@ struct MainView: View {
                 .ignoresSafeArea()
             VStack {
                 Spacer()
-                VStack(spacing: 200) {
+                VStack(spacing: 20) {
                     VStack {
                         Text("Welcome.")
                             .font(.system(size: 35, weight: .bold))
@@ -483,7 +483,8 @@ struct MainView: View {
                             .frame(width: 300, height: 80)
                             .multilineTextAlignment(.center)
                     }
-                    HStack(spacing: 40) {
+                    .padding(.bottom, 50)
+                    HStack(spacing: 20) {
                         Button(action: {
                             showCamera = true
                         }) {
@@ -495,16 +496,16 @@ struct MainView: View {
                                 Image(systemName: "camera")
                                     .font(.system(size: 40))
                             }
-                            .frame(width: 200, height: 200)
+                            .frame(width: 175, height: 175)
                             .background(LinearGradient(gradient: Gradient(colors: [.white, .blue]),
                                                        startPoint: .topLeading,
                                                        endPoint: .bottomTrailing))
-                            .clipShape(Circle())
+                            .cornerRadius(20)
                         }
                         .sheet(isPresented: $showCamera) {
                             CameraView(cameraVM: cameraVM)
                         }
-                        .padding(.bottom, 100)
+                        
                         Menu {
                             ForEach(crop_type, id: \.self) { type in
                                 Button(action: {
@@ -516,16 +517,61 @@ struct MainView: View {
                                 }
                             }
                         } label: {
-                            Text(selectedCrop.isEmpty ? "Crop Type" : selectedCrop)
-                                .fontWeight(.bold)
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(5)
+                            Label {
+                                Text("Crop type")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(.black)
+                            } icon: {
+                                Image(systemName: "leaf.fill")
+                                    .font(.system(size: 40))
+                            }
+                            .frame(width: 175, height: 175) // Match Diagnosis button
+                            .background(LinearGradient(gradient: Gradient(colors: [.white, .green]),
+                                                       startPoint: .topLeading,
+                                                       endPoint: .bottomTrailing))
+                            .cornerRadius(20)
                         }
-                        .padding(.bottom, 100)
+                        
                     }
+                    HStack(spacing: 20) {
+                        NavigationLink(destination: StatsView()) {
+                            Label("Statistics", systemImage: "chart.line.uptrend.xyaxis")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        
+                        .sheet(isPresented: $showCamera) {
+                            CameraView(cameraVM: cameraVM)
+                        }
+                        
+                        Button(action: {
+                            print("Contribute pressed")
+                        }) {
+                            Label {
+                                Text("Contribute")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.black)
+                            } icon: {
+                                Image(systemName: "person.3.fill")
+                                    .font(.system(size: 35))
+                            }
+                            .frame(width: 175, height: 175)
+                            .background(LinearGradient(gradient: Gradient(colors: [.white, .blue]),
+                                                       startPoint: .topLeading,
+                                                       endPoint: .bottomTrailing))
+                            .cornerRadius(20)
+                        }
+                        .sheet(isPresented: $showCamera) {
+                            CameraView(cameraVM: cameraVM)
+                        }
+                        
+                        
+                    }
+                    .padding(.bottom, 100)
                 }
-                Spacer()
+                
                 HStack(spacing: 50) {
                     NavigationLink(destination: SettingsView()) {
                         Label("Settings", systemImage: "gear")
@@ -603,7 +649,17 @@ struct SettingsView: View {
         }
     }
 }
-
+struct StatsView: View {
+    var body: some View {
+        NavigationView {
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [.gray.opacity(0.7), .black.opacity(0.65)]),
+                               startPoint: .topLeading,
+                               endPoint: .bottomTrailing)
+            }
+        }
+    }
+}
 struct DeveloperView: View {
     @State private var devkey: String = ""
     var body: some View {

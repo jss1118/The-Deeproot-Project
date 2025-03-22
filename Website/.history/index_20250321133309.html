@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deeproot A.I</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      background-color: #f5f5f5;
+    }
+
+    nav {
+      background: rgba(22, 22, 22, 0.9);
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+    }
+
+    .navlinks {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+      padding: 15px;
+      margin: 0;
+    }
+
+    .navlink, .navicon svg {
+      color: #d3d3d3;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .navlink:hover, .mainpagelink a:hover {
+      color: white;
+    }
+
+    .mainpage2, .mainpage3, .mainpage4 {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .mainpage2 {
+      background: linear-gradient(135deg, #2e2e2e, #4f4f4f);
+      color: white;
+    }
+
+    .mainpage2 img, .mainpage3 img, .promo1 img {
+      max-width: 100%;
+      height: auto;
+      
+    }
+
+    .mp2-title1 {
+      font-size: 56px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .mp2-desc, .mp3desc {
+      font-size: 22px;
+      margin-bottom: 25px;
+    }
+
+    .mainpagelink a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background: #007aff;
+      color: white;
+      border-radius: 25px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .mainpage3 {
+      background: white;
+    }
+
+    .mainpage3 img {
+      margin-top: 20px;
+      border-radius: 12px;
+    }
+
+    .mainpage4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      background-color: white;
+      padding: 40px;
+    }
+
+    .promo1, .promo2, .promo3, .promo4, .promo5, .promo6 {
+      background-size: cover;
+      background-position: center;
+      height: 450px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+      color: white;
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .promo1 img, .promo2 img, .promo3 img, .promo4 img, .promo5 img, .promo6 img {
+      margin-bottom: 10px;
+    }
+
+    .promo1 {
+      background-color: #9a8fa8;
+      color: #f5f5f5;
+    }
+    .promo2 {
+      background-color: #7fb8e8;
+      color: #f5f5f5;
+      background-size: cover;
+      background-position: center;
+      height: 450px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+      border-radius: 12px;
+      position: relative;
+    }
+    .promo2 p {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    
+    .promo1 img {
+      width: 240px;   
+      height: auto;
+      margin: 0 auto 15px auto;
+      display: block;
+      background: none;
+    }
+
+    .promo2 img {
+      width: 360px;
+      height: 400px;
+      margin: 0 auto 15px auto;
+      display: block;
+      border-radius: 10px;
+      background-color: rgb(199, 247, 254);
+      position: relative;
+      bottom: 30px;
+    }
+
+    footer {
+      background-color: #2e2e2e;
+      color: #ccc;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: #007aff;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .mp2-title1 { font-size: 40px; }
+      .mp2-desc, .mp3desc { font-size: 18px; }
+      .mainpagelink a { padding: 10px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <ul class="navlinks">
+      <li><a class="navlink" href="/">iOS</a></li>
+      <li><a class="navlink" href="/applestore">Raspberry Pi 5</a></li>
+      <li><a class="navlink" href="/">Native</a></li>
+      <li><a class="navlink" href="/">State-of-the-art Models</a></li>
+      <li><a class="navlink" href="/">Developers</a></li>
+    </ul>
+  </nav>
+
+  <section class="mainpage2">
+    <h1 class="mp2-title1">Deeproot</h1>
+    <p class="mp2-desc">Portable. Fast. Secure.</p>
+    <p class="mp2-desc">The all-in-one automated solution for early plant disease detection.</p>
+    <div class="mainpagelink"><a href="#">Learn More</a></div>
+    <img src="wide logo.png" alt="Deeproot Logo">
+  </section>
+
+  <section class="mainpage3">
+    <p class="mp3desc">Three pipelines, optimized for your use case.</p>
+    <img src="newgraph.png" alt="Machine Learning Pipelines">
+    <div class="mainpagelink"><a href="#">View Pipelines</a></div>
+  </section>
+
+  <section class="mainpage4">
+    <div class="promo1">
+      <img src="lock.fill.png" alt="Promo icon">
+      <p>Edge processing, completely private.</p>
+      <div class="mainpagelink"><a href="#">Learn More</a></div>
+    </div>
+    <div class="promo2">
+      <img src="deeprootios.png" alt="ios icon">
+      <p>Access plant disease detection from the palm of your hand. No additional hardware required.</p>
+      <div class="mainpagelink"><a href="#">Learn More</a></div>
+    </div>
+    
+
+
+    <div class="promo3"></div>
+    <div class="promo4"></div>
+    <div class="promo5"></div>
+    <div class="promo6"></div>
+  </section>
+
+  <footer>
+    <p>The Deeproot Project by <a href="https://github.com/iamreiyn">Josh Stanley</a></p>
+    <p>Deeproot started by Josh Stanley as an 8th grade science project and grew into a full application, helping farmers detect plant diseases early. It combines deep learning and computer vision to protect crops in a cost-effective and automated way.</p>
+  </footer>
+</body>
+</html>
