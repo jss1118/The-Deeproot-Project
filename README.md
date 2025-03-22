@@ -15,13 +15,7 @@ Creating a cost effective, real time, deep learning application for the early de
 
 
 
-------UPCOMING UPDATE-------
-In the next few months, we expect a fully native iOS application to be available, along with the possibility of a native macOS app as well. 
-Ubuntu and most other linux distributions should also expect to see a native application come.
-As for Windows, due to compatability issues, a native user interface is not expected to arrive at least until after the other
-apps are finished. At the bottom of this page, regular updates will be made providing prototype images for the app.
-
-
+iOS certain version: V0.1 alpha
 
 
 This repository is organized into 6 sections:
