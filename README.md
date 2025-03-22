@@ -15,7 +15,7 @@ Creating a cost effective, real time, deep learning application for the early de
 
 
 
-iOS certain version: V0.1 alpha
+iOS version: V0.1 alpha
 
 
 This repository is organized into 6 sections:
