@@ -4,7 +4,8 @@
 involved: [Discord](https://discord.gg/vdEb4j3z) • [Website](http://thedeeprootproject.com)</b>
 
 
-<img width="824" alt="Screenshot 2025-03-24 at 10 54 04 AM" src="https://github.com/user-attachments/assets/9e0673ef-2154-4993-871f-aaf850818e51" />
+<img width="796" alt="Screenshot 2025-03-24 at 12 48 17 PM" src="https://github.com/user-attachments/assets/c8b94496-b62d-48bd-b03f-a75a8b787308" />
+
 
 Note: The image above is a mockup for an admin portal that is in development.
 
