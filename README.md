@@ -1,7 +1,10 @@
 # The Deeproot Project: Bringing affordable plant disease detection to farmers with deep learning.
 
 <b>Get
-involved: [Discord](https://discord.gg/vdEb4j3z) • [Website](http://thedeeprootproject.com)</b>
+involved: [Discord](https://discord.gg/vdEb4j3z) • [Website](http://thedeeprootproject.com)
+DOWNLOAD ONLY AVAILABLE ON WEBSITE
+</b>
+
 
 
 <img width="796" alt="Screenshot 2025-03-24 at 12 48 17 PM" src="https://github.com/user-attachments/assets/c8b94496-b62d-48bd-b03f-a75a8b787308" />
@@ -21,7 +24,7 @@ There are 3 main pipelines for Deeproot:
 
 1. iOS (Consumer targeted) we're in alpha and release invites in our Discord or Github. It can be downloaded to an iOS device via git cloning this repository through Xcode, however it is expected to be on the app store soon.
 2. Hailo A.I Neural Processors (Embedded systems/Large scale targeted). This version is without a U.I, however it is the fastest and least power consuming version. It requires a Hailo 8 or Hailo 8L A.I chip to use.
-3. Native. (Developer targeted) The barebones and flexible version of deeproot. It has an optional customtkinter user interface, however it is recommended for only testing purposes.
+3. Native. (Developer targeted) The barebones and flexible version of deeproot. 
 
 
 <img width="694" alt="Screenshot 2025-03-23 at 10 16 27 PM" src="https://github.com/user-attachments/assets/3fa9493a-9f28-48e2-9e53-2aac32c64919" />
