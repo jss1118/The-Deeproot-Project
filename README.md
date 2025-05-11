@@ -31,7 +31,8 @@ There are 3 main pipelines for Deeproot:
 
 ## Becoming a developer
 
-If you would like to contribute to The Deeproot Project, visit (thedeeprootproject.com).
+If you would like to contribute to The Deeproot Project, or gain access to beta features, please submit
+a request by visiting http://thedeeprootproject.com/developer.html
 
 
 ## Raspberry Pi 5 Hailo 8L Setup
